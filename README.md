@@ -1,0 +1,2 @@
+# acsh
+🖥️ Anti-Crowd SHell
