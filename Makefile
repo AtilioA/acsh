@@ -1,3 +1,7 @@
+# ACSH - INTEGRANTES:
+# Atílio Antônio Dadalto
+# Philipe Aguiar Marques
+# Renan Moreira Gomes
 
 OBJ      := obj
 SRC      := src
