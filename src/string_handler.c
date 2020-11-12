@@ -23,7 +23,6 @@ int parse_input(char **input)
     }
 }
 
-//quebra a string dada de a acordo com o token
 char **split_string_token(char *input, const char *token)
 {
     char **stringsArray = malloc(MAX_COMMANDS * sizeof(char *));
@@ -50,7 +49,6 @@ char **split_string_token(char *input, const char *token)
     return stringsArray;
 }
 
-// Libera vetor de strings de comandos
 void free_commands(char **commands)
 {
     for (int i = 0; i < MAX_COMMANDS && commands[i]; i++)
@@ -60,7 +58,6 @@ void free_commands(char **commands)
     free(commands);
 }
 
-// Remove espaços no início de uma string
 char *ltrim(char *s)
 {
     while (isspace(*s))
@@ -71,7 +68,6 @@ char *ltrim(char *s)
     return s;
 }
 
-// Remove espacos no final de uma string
 char *rtrim(char *s)
 {
     char *back = s + strlen(s); // Aponta para última posição da string
@@ -84,7 +80,6 @@ char *rtrim(char *s)
     return s;
 }
 
-// Remove espaços no início e no final da string
 char *trim(char *s)
 {
     return rtrim(ltrim(s));

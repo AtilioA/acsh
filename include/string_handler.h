@@ -12,11 +12,16 @@
 
 int parse_input(char **input);
 
+// Quebra string dada de acordo com token
 char **split_string_token(char *input, const char *token);
+// Libera vetor de strings de comandos
 void free_commands(char **commands);
 
+// Remove espaços no início de uma string
 char *ltrim(char *);
+// Remove espacos no final de uma string
 char *rtrim(char *);
+// Remove espaços no início e no final da string
 char *trim(char *);
 
 #endif

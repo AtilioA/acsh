@@ -14,7 +14,9 @@ enum commands
 void acsh_cd(char *dir);
 void acsh_exit(int status);
 
+// Verifica se string (entrada do usuário) é um comando interno
 int is_internal_command(char *string);
+// Roda comando interno
 void run_internal_command(int command);
 
 #endif
