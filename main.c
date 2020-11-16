@@ -21,7 +21,31 @@ int main(/*int argc, char *argv[]*/)
 
     system("clear");
 
-    /* Handlers de sinais vêm aqui */
+    // Instala os novos handlers de sinal (incompleto)
+    struct sigaction handler_sigint = {.sa_handler = trata_SIGINT};
+    struct sigaction handler_sigtstp = {.sa_handler = trata_SIGTSTP};
+    struct sigaction handler_sigquit = {.sa_handler = trata_SIGQUIT};
+
+    // Novo handler do sinal SIGINT (Ctrl+C)
+    if (sigemptyset(&handler_sigint.sa_mask) == -1 ||
+        sigaction(SIGINT, &handler_sigint, NULL) == -1)
+    {
+        perror("Falha ao definir novo handler para SIGINT");
+    }
+
+    // novo handler do SIGQUIT (Ctrl+\)
+    if (sigemptyset(&handler_sigquit.sa_mask) == -1 ||
+        sigaction(SIGQUIT, &handler_sigquit, NULL) == -1)
+    {
+        perror("Falha ao definir novo handler para SIGQUIT\n");
+    }
+
+    // Novo handler do sinal SIGTSTP (Ctrl+Z)
+    if (sigemptyset(&handler_sigtstp.sa_mask) == -1 ||
+        sigaction(SIGTSTP, &handler_sigtstp, NULL) == -1)
+    {
+        perror("Falha ao definir novo handler para SIGTSTP\n");
+    }
 
     while (true)
     {
