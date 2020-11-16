@@ -23,11 +23,39 @@ int parse_input(char **input)
     }
 }
 
+char *multi_tok(char *input, char *delimiter)
+{
+    static char *string;
+    if (input != NULL)
+    {
+        string = input;
+    }
+
+    if (string == NULL)
+    {
+        return string;
+    }
+
+    char *end = strstr(string, delimiter);
+    if (end == NULL)
+    {
+        char *temp = string;
+        string = NULL;
+        return temp;
+    }
+
+    char *temp = string;
+
+    *end = '\0';
+    string = end + strlen(delimiter);
+    return temp;
+}
+
 char **split_string_token(char *input, const char *token)
 {
     char **stringsArray = malloc(MAX_COMMANDS * sizeof(char *));
 
-    char *str = strtok(input, token); // Divide string em tokens
+    char *str = multi_tok(input, token); // Divide string em tokens
 
     for (int i = 0; i < MAX_COMMANDS; i++)
     {
@@ -43,7 +71,7 @@ char **split_string_token(char *input, const char *token)
         strncpy(stringsArray[i], str, tam_str);
 
         // Lê próxima string
-        str = strtok(NULL, token);
+        str = multi_tok(NULL, token);
     }
 
     return stringsArray;
