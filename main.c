@@ -67,9 +67,11 @@ int main(/*int argc, char *argv[]*/)
 
             if (isInternal == EXIT)
             {
+                free_commands(commands);
                 free(input);
                 break;
             }
+
         }
         else // Se for comando externo
         {
