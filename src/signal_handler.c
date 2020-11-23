@@ -15,6 +15,10 @@ void handle_signal(bool runningForeground)
     }
 }
 
+void ignore_SIG(){
+    return;
+}
+
 void trata_SIGINT()
 {
     handle_signal(false);

@@ -13,5 +13,6 @@ void handle_signal(bool runningForeground);
 void trata_SIGINT();
 void trata_SIGTSTP();
 void trata_SIGQUIT();
+void ignore_SIG();
 
 #endif
