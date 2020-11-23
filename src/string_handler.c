@@ -5,9 +5,10 @@ int parse_input(char **input)
     size_t buffSize = 0;
 
     // Checa se existe ao menos um caractere
-    int line;
-    if ((line = getline(input, &buffSize, stdin)) > 0)
+    int line = getline(input, &buffSize, stdin);
+    if (line > 1)
     {
+        printf("line: %d, %s", line, *input);
         int lastChar = strlen(*input) - 1;
         (*input)[lastChar] = '\0'; // Remove \n da entrada
 
@@ -17,7 +18,6 @@ int parse_input(char **input)
     else // Se não houver caracteres
     {
         free(*input);
-
         rewind(stdin);
         return 0;
     }
@@ -55,7 +55,7 @@ char **split_string_token(char *input, const char *token)
 {
     char **stringsArray = malloc(MAX_COMMANDS * sizeof(char *));
 
-    char *str = multi_tok(input, token); // Divide string em tokens
+    char *str = multi_tok(input, (char *)token); // Divide string em tokens
 
     for (int i = 0; i < MAX_COMMANDS; i++)
     {
@@ -71,7 +71,7 @@ char **split_string_token(char *input, const char *token)
         strncpy(stringsArray[i], str, tam_str);
 
         // Lê próxima string
-        str = multi_tok(NULL, token);
+        str = multi_tok(NULL, (char *)token);
     }
 
     return stringsArray;
