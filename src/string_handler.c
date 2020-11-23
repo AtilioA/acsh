@@ -23,6 +23,27 @@ int parse_input(char **input)
     }
 }
 
+int occur_in_str(char **v_str, int n_args, char *str, int remove)
+{
+    int i;
+
+    for (i = 0; i < n_args; i++)
+    {
+        if (v_str[i] == NULL)
+            break;
+        if (strcmp(v_str[i], str) == 0)
+        {
+            if(remove) {
+                free(v_str[i]);
+                v_str[i] = NULL;
+            }
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 char *multi_tok(char *input, char *delimiter)
 {
     static char *string;
