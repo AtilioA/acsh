@@ -17,15 +17,18 @@ void handle_signal(bool runningForeground)
 
 void trata_SIGINT()
 {
+    handle_signal(false);
     // raise(SIGINT);
 }
 
 void trata_SIGTSTP()
 {
+    handle_signal(false);
     // raise(SIGTSTP);
 }
 
 void trata_SIGQUIT()
 {
+    handle_signal(false);
     // raise(SIGQUIT);
 }
