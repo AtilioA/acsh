@@ -18,6 +18,8 @@ void run_external_commands(char **commands)
 
   int status;
 
+  int is_background = 1;
+
   // variavel auxiliar de grupo
   __gid_t group;
 
@@ -27,6 +29,9 @@ void run_external_commands(char **commands)
       break;
     argv = split_string_token(commands[i], " ");
     filename = argv[0];
+
+    is_background = !occur_in_str(argv, 4, (char *)"%", 1);
+    printf("is_bg: %d\n", is_background);
 
     // cria filho
     child = fork();
@@ -55,10 +60,17 @@ void run_external_commands(char **commands)
       if (execvp(filename, argv) == -1)
       {
         printf("Erro ao encontrar o comando.\n");
+        exit(0);
       }
     }
-    // nao espera filho + liberando os vetores
-    waitpid(-1, &status, WNOHANG);
+
+    //background ou foreground
+    if (is_background)
+      waitpid(child, &status, WNOHANG);
+    else
+      waitpid(child, &status, 0);
+
+    // liberando as strings
     filename = NULL;
     free_commands(argv);
   }

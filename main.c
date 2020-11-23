@@ -62,7 +62,8 @@ int main(/*int argc, char *argv[]*/)
         int isInternal = is_internal_command(input);
         if (isInternal) // Se for comando interno
         {
-            run_internal_command(isInternal);
+            commands = split_string_token(input, " ");
+            run_internal_command(isInternal, commands);
 
             if (isInternal == EXIT)
             {
