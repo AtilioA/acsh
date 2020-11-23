@@ -11,11 +11,14 @@ EXE 	 := acsh
 PROJETO  := main
 
 # Cria objetos de todos os arquivos de código-fonte para então linká-los no programa final
-main: clean $(OBJ)/internal_commands.o $(OBJ)/signal_handler.o $(OBJ)/string_handler.o $(OBJ)/utils.o $(OBJ)/$(PROJETO).o
+main: clean $(OBJ)/internal_commands.o $(OBJ)/external_commands.o $(OBJ)/signal_handler.o $(OBJ)/string_handler.o $(OBJ)/utils.o $(OBJ)/$(PROJETO).o
 	gcc $(OBJ)/*.o -o $(EXE) $(CFLAGS)
 
 $(OBJ)/internal_commands.o: $(SRC)/internal_commands.c $(INC)/internal_commands.h
 	gcc -c $(CFLAGS) "$(SRC)/internal_commands.c" -o "$(OBJ)/internal_commands.o"
+
+$(OBJ)/external_commands.o: $(SRC)/external_commands.c $(INC)/external_commands.h
+	gcc -c $(CFLAGS) "$(SRC)/external_commands.c" -o "$(OBJ)/external_commands.o"
 
 $(OBJ)/sys_wrapper.o: $(SRC)/sys_wrapper.c $(INC)/sys_wrapper.h
 	gcc -c $(CFLAGS) "$(SRC)/sys_wrapper.c" -o "$(OBJ)/sys_wrapper.o"
