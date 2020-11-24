@@ -15,7 +15,8 @@ void handle_signal(bool runningForeground)
     }
 }
 
-void ignore_SIG(){
+void ignore_SIG()
+{
     return;
 }
 

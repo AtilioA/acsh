@@ -23,19 +23,22 @@ int parse_input(char **input)
     }
 }
 
-int occur_in_str(char **v_str, int n_args, char *str, int remove)
+int occur_in_str(char **strArray, int nArgs, char *str, int remove)
 {
     int i;
 
-    for (i = 0; i < n_args; i++)
+    for (i = 0; i < nArgs; i++)
     {
-        if (v_str[i] == NULL)
-            break;
-        if (strcmp(v_str[i], str) == 0)
+        if (strArray[i] == NULL)
         {
-            if(remove) {
-                free(v_str[i]);
-                v_str[i] = NULL;
+            break;
+        }
+        if (strcmp(strArray[i], str) == 0)
+        {
+            if (remove)
+            {
+                free(strArray[i]);
+                strArray[i] = NULL;
             }
             return 1;
         }

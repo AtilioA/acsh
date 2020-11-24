@@ -4,13 +4,11 @@
 
 #include <unistd.h>
 
-// Comando interno da acsh "cd"
-void acsh_cd(char *dir)
-{
-    printf("%s\n", dir);
-}
+// void acsh_cd(char *dir)
+// {
+//     printf("%s\n", dir);
+// }
 
-// Comando interno da acsh "exit"
 void acsh_exit(int status)
 {
     printf("%i\n", status);
@@ -19,10 +17,14 @@ void acsh_exit(int status)
 int is_internal_command(char *string)
 {
     if (strcmp(string, "exit") == 0)
+    {
         return EXIT;
+    }
 
-    if (strlen(string) > 2 && (string[0] == 'c' && string[1] == 'd'))
+    if (strcmp(string, "cd") == 0)
+    {
         return CD;
+    }
 
     return 0;
 }
@@ -34,8 +36,10 @@ void run_internal_command(int command, char **argv)
     {
     case (CD):
         dir = argv[1];
-        if(chdir(dir)!=0)
+        if (chdir(dir) != 0)
+        {
             perror("cd error.");
+        }
         break;
 
     case (EXIT):

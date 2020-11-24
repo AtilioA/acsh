@@ -17,8 +17,11 @@ char **split_string_token(char *input, const char *token);
 // Libera vetor de strings de comandos
 void free_commands(char **commands);
 
-// Verifica a ocorrencia de uma string em um vetor de strings
-int occur_in_str(char **v_str, int n_args, char *str, int remove);
+// Verifica a ocorrência de uma string em um vetor de strings
+int occur_in_str(char **strArray, int nArgs, char *str, int remove);
+
+// Quebra uma string de entrada com base em uma string delimitadora
+char *multi_tok(char *input, char *delimiter);
 
 // Remove espaços no início de uma string
 char *ltrim(char *);

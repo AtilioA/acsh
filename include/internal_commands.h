@@ -4,14 +4,16 @@
 enum commands
 {
     CD = 1,
-    EXIT, // CLEAN_DIE
+    EXIT,
 };
 
 #include <string.h>
 #include <stdio.h>
 #include <wait.h>
 
+// Comando interno da acsh "cd"
 void acsh_cd(char *dir);
+// Comando interno da acsh "exit"
 void acsh_exit(int status);
 
 // Verifica se string (entrada do usuário) é um comando interno
