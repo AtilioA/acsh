@@ -6,7 +6,7 @@ void handle_signal(bool runningForeground)
 {
     if (runningForeground == false)
     {
-        printf("Não adianta me enviar o sinal por Ctrl-... Estou vacinado!!\n");
+        printf(" Não adianta me enviar o sinal por Ctrl-... Estou vacinado!!");
         // Ignora sinal
     }
     else

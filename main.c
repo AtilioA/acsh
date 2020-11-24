@@ -50,13 +50,15 @@ int main(/*int argc, char *argv[]*/)
     while (true)
     {
         printf("acsh> ");
-        //scanf("[^\n]s", input);
 
         // Caso ocorra erro na leitura, comece uma nova iteração
         if (!parse_input(&input))
         {
+            printf("\n");
             continue;
         }
+
+        input = trim(input);
 
         int isInternal = is_internal_command(input);
         if (isInternal) // Se for comando interno
@@ -85,7 +87,7 @@ int main(/*int argc, char *argv[]*/)
         usleep(1000);
 
         // free_commands(commands);
-        free(input);
+        free(input); // Causando invalid free()
     }
 
     return EXIT_SUCCESS;
