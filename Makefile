@@ -19,10 +19,6 @@ $(OBJ)/internal_commands.o: $(SRC)/internal_commands.c $(INC)/internal_commands.
 
 $(OBJ)/external_commands.o: $(SRC)/external_commands.c $(INC)/external_commands.h
 	gcc -c $(CFLAGS) "$(SRC)/external_commands.c" -o "$(OBJ)/external_commands.o"
-
-$(OBJ)/sys_wrapper.o: $(SRC)/sys_wrapper.c $(INC)/sys_wrapper.h
-	gcc -c $(CFLAGS) "$(SRC)/sys_wrapper.c" -o "$(OBJ)/sys_wrapper.o"
-
 $(OBJ)/signal_handler.o: $(SRC)/signal_handler.c $(INC)/signal_handler.h
 	gcc -c $(CFLAGS) "$(SRC)/signal_handler.c" -o "$(OBJ)/signal_handler.o"
 
