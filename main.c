@@ -13,14 +13,13 @@
 #include "include/signal_handler.h"
 #include "include/internal_commands.h"
 #include "include/external_commands.h"
-#include "include/sys_wrapper.h"
 
 int main(/*int argc, char *argv[]*/)
 {
     char *input = NULL;
     char **commands = NULL;
 
-    //system("clear");
+    // system("clear");
 
     // Instala os novos handlers de sinal (incompleto)
     struct sigaction handler_sigint = {.sa_handler = trata_SIGINT};
@@ -71,7 +70,6 @@ int main(/*int argc, char *argv[]*/)
                 free(input);
                 break;
             }
-
         }
         else // Se for comando externo
         {
@@ -79,10 +77,12 @@ int main(/*int argc, char *argv[]*/)
             commands = split_string_token(input, " <3 ");
 
             run_external_commands(commands);
-            /* Executa ou faz algo com comandos */
 
             free_commands(commands);
         }
+
+        // Para que o prompt seja impresso corretamente após execução de processos
+        usleep(1000);
 
         // free_commands(commands);
         free(input);
