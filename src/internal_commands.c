@@ -21,7 +21,7 @@ int is_internal_command(char *string)
         return EXIT;
     }
 
-    if (strcmp(string, "cd") == 0)
+    if (strlen(string) > 1 && (string[0] == 'c' && string[1] == 'd'))
     {
         return CD;
     }
