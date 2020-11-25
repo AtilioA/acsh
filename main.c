@@ -58,7 +58,7 @@ int main(/*int argc, char *argv[]*/)
             continue;
         }
 
-        input = trim(input);
+        // input = trim(input);
 
         int isInternal = is_internal_command(input);
         if (isInternal) // Se for comando interno
@@ -66,9 +66,9 @@ int main(/*int argc, char *argv[]*/)
             commands = split_string_token(input, " ");
             run_internal_command(isInternal, commands);
 
+            free_commands(commands);
             if (isInternal == EXIT)
             {
-                free_commands(commands);
                 free(input);
                 break;
             }
