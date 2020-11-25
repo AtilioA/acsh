@@ -35,10 +35,13 @@ void run_internal_command(int command, char **argv)
     switch (command)
     {
     case (CD):
-        dir = argv[1];
-        if (chdir(dir) != 0)
+        if (argv[1] != NULL)
         {
-            perror("cd error.");
+            dir = argv[1];
+            if (chdir(dir) != 0)
+            {
+                perror("cd error.");
+            }
         }
         break;
 
