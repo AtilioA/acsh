@@ -36,7 +36,7 @@ void run_external_commands(char **commands)
         filename = argv[0];
 
         isBackground = !occur_in_str(argv, 4, (char *)"%", 1);
-        // printf("is_bg: %d\n", isBackground);
+        printf("is_bg: %d\n", isBackground);
 
         // Cria filho
         child = fork();

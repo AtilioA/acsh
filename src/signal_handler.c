@@ -9,10 +9,7 @@ void handle_signal(bool runningForeground)
         printf(" Não adianta me enviar o sinal por Ctrl-... Estou vacinado!!");
         // Ignora sinal
     }
-    else
-    {
-        // Processo em execução recebe sinal
-    }
+    // Processo em execução recebe sinal
 }
 
 void ignore_SIG()
@@ -23,17 +20,14 @@ void ignore_SIG()
 void trata_SIGINT()
 {
     handle_signal(false);
-    // raise(SIGINT);
 }
 
 void trata_SIGTSTP()
 {
     handle_signal(false);
-    // raise(SIGTSTP);
 }
 
 void trata_SIGQUIT()
 {
     handle_signal(false);
-    // raise(SIGQUIT);
 }

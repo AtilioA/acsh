@@ -3,9 +3,6 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
-// #include <errno.h>
-// #include <sys/time.h>
-// #include <sys/wait.h>
 #include <stdbool.h>
 
 #include "include/utils.h"
@@ -87,7 +84,7 @@ int main(/*int argc, char *argv[]*/)
         usleep(1000);
 
         // free_commands(commands);
-        free(input); // Causando invalid free()
+        free(input);
     }
 
     return EXIT_SUCCESS;
