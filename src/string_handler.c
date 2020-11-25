@@ -110,29 +110,32 @@ void free_commands(char **commands)
     free(commands);
 }
 
-char *ltrim(char *s)
+char *trim(char *s, const char *character)
 {
-    while (isspace(*s))
+    char *start, *end, *sp, *ep;
+    size_t len;
+
+    sp = start = s;
+    ep = end = s + strlen(s) - 1;
+
+    while (sp <= end && strchr(character, *sp))
     {
-        s++;
+        sp++;
     }
 
-    return s;
-}
-
-char *rtrim(char *s)
-{
-    char *back = s + strlen(s); // Aponta para última posição da string
-    while (isspace(*back))
+    while (ep > sp && strchr(character, *ep))
     {
-        --back; // Retorna posições enquanto existir espaço
+        ep--;
     }
-    *(back + 1) = '\0'; // Coloca '\0' no último espaço encontrado (primeiro)
+
+    len = (sp > ep) ? 0 : ((ep - sp) + 1);
+
+    if (s != sp)
+    {
+        memmove(s, sp, len);
+    }
+
+    s[len] = '\0';
 
     return s;
-}
-
-char *trim(char *s)
-{
-    return rtrim(ltrim(s));
 }

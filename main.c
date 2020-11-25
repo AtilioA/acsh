@@ -58,7 +58,7 @@ int main(/*int argc, char *argv[]*/)
             continue;
         }
 
-        // input = trim(input);
+        input = trim(input, " ");
 
         int isInternal = is_internal_command(input);
         if (isInternal) // Se for comando interno

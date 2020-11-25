@@ -23,11 +23,7 @@ int occur_in_str(char **strArray, int nArgs, char *str, int remove);
 // Quebra uma string de entrada com base em uma string delimitadora
 char *multi_tok(char *input, char *delimiter);
 
-// Remove espaços no início de uma string
-char *ltrim(char *);
-// Remove espacos no final de uma string
-char *rtrim(char *);
-// Remove espaços no início e no final da string
-char *trim(char *);
+// Remove caracteres no início e no final da string
+char *trim(char *, const char *character);
 
 #endif
