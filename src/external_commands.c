@@ -57,7 +57,7 @@ void run_external_commands(char **commands)
         if (sigemptyset(&handler_sigint.sa_mask) == -1 ||
             sigaction(SIGINT, &handler_sigint, NULL) == -1)
         {
-            perror("Falha ao definir novo handler para SIGINT");
+            perror("Falha ao definir novo handler para SIGINT.\n");
         }
         if (sigemptyset(&handler_sigquit.sa_mask) == -1 ||
             sigaction(SIGQUIT, &handler_sigquit, NULL) == -1)
@@ -77,7 +77,7 @@ void run_external_commands(char **commands)
         if (sigemptyset(&handler_sigint2.sa_mask) == -1 ||
             sigaction(SIGINT, &handler_sigint2, NULL) == -1)
         {
-            perror("Falha ao definir novo handler para SIGINT");
+            perror("Falha ao definir novo handler para SIGINT.\n");
         }
 
         // Novo handler do SIGQUIT (Ctrl+\)
@@ -104,6 +104,7 @@ void run_external_commands(char **commands)
         else if (controlProcess == 0) // Filho do processo de controle
         {
             setsid();
+            int processesRunning = 0;
             int pids[MAX_COMMANDS] = {0}; // Inicializa vetor de pids
             for (i = 0; i < MAX_COMMANDS; i++)
             {
@@ -137,38 +138,51 @@ void run_external_commands(char **commands)
                 else
                 {
                     pids[i] = pid; // Preenche vetor de pids com pid de filho criado na iteração
+                    processesRunning++;
                 }
             }
 
-            int pid;
-            int signaled = 0;
-            // Observa se algum filho recebeu SIGUSR1
-            while ((pid = waitpid(-1, &status, WNOHANG)) > -1)
+            printf("%i\n", processesRunning);
+
+            if (processesRunning == 1)
             {
-                if (pid > 0 && WIFSIGNALED(status))
+                // ???
+                // Ignora SIGUSR1 se houver apenas um rodando em background
+                struct sigaction handler_sigusr1 = {.sa_handler = ignore_SIG};
+                if (sigemptyset(&handler_sigusr1.sa_mask) == -1 ||
+                    sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
                 {
-                    if (WTERMSIG(status) == SIGUSR1)
+                    perror("Falha ao definir novo handler para SIGUSR1.\n");
+                }
+            }
+            else
+            {
+                int pid;
+                int signaled = 0;
+                // Observa se algum filho recebeu SIGUSR1
+                while ((pid = waitpid(-1, &status, WNOHANG)) > -1)
+                {
+                    if (pid > 0 && WIFSIGNALED(status))
                     {
-                        signaled = 1;
-                        break;
+                        if (WTERMSIG(status) == SIGUSR1)
+                        {
+                            signaled = 1;
+                            break;
+                        }
+                    }
+                }
+                // Se algum filho recebeu SIGUSR1, também mata todos os irmãos
+                if (signaled)
+                {
+                    for (int i = 0; i < MAX_COMMANDS; i++)
+                    {
+                        if (pids[i] != 0)
+                        {
+                            kill(pids[i], SIGUSR1);
+                        }
                     }
                 }
             }
-            // Se algum filho recebeu SIGUSR1, também mata todos os irmãos
-            if (signaled)
-            {
-                for (int i = 0; i < MAX_COMMANDS; i++)
-                {
-                    if (pids[i] != 0)
-                    {
-                        kill(pids[i], SIGUSR1);
-                    }
-                }
-            }
-            
-            filename = NULL;
-            free_commands(argv);
-            exit(0);
         }
     }
 
