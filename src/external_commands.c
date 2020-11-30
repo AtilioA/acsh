@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-void run_external_commands(char **commands)
+void run_external_commands(char **commands, char *input)
 {
     // Variáveis auxiliares de fluxo
     int i;
@@ -42,6 +42,8 @@ void run_external_commands(char **commands)
                 printf("Comando desconhecido: %s\n", argv[0]);
                 filename = NULL;
                 free_commands(argv);
+                free_commands(commands);
+                free(input);
                 exit(0);
             }
         }
@@ -132,6 +134,8 @@ void run_external_commands(char **commands)
                         printf("Comando desconhecido: %s\n", argv[0]);
                         filename = NULL;
                         free_commands(argv);
+                        free_commands(commands);
+                        free(input);
                         exit(0);
                     }
                 }
@@ -185,6 +189,8 @@ void run_external_commands(char **commands)
             }
             filename = NULL;
             free_commands(argv);
+            free_commands(commands);
+            free(input);
             exit(0);
         }
     }

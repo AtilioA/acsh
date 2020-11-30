@@ -75,7 +75,7 @@ int main(/*int argc, char *argv[]*/)
             // Obtém comandos da string de entrada
             commands = split_string_token(input, " <3 ");
 
-            run_external_commands(commands);
+            run_external_commands(commands, input);
 
             free_commands(commands);
         }

@@ -4,6 +4,6 @@
 #include <unistd.h>
 
 // Executa comandos externos em background
-void run_external_commands(char **commands);
+void run_external_commands(char **commands, char *input);
 
 #endif
