@@ -8,7 +8,6 @@ int parse_input(char **input)
     int line = getline(input, &buffSize, stdin);
     if (line > 1)
     {
-        //printf("line: %d, %s", line, *input);
         int lastChar = strlen(*input) - 1;
         (*input)[lastChar] = '\0'; // Remove \n da entrada
 

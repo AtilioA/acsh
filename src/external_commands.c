@@ -183,9 +183,11 @@ void run_external_commands(char **commands)
                     }
                 }
             }
+            filename = NULL;
+            free_commands(argv);
+            exit(0);
         }
     }
-
     filename = NULL;
     free_commands(argv);
 }
