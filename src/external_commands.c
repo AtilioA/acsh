@@ -19,10 +19,22 @@ void run_external_commands(char **commands, char *input)
 
     int status;
     int isBackground = 1; // Roda em background por padrão
+    int nCommands = 0;
 
     // Faz parse do argv dos comandos
     argv = split_string_token(commands[0], " ");
     filename = argv[0];
+    for (int i = 0; i < MAX_COMMANDS; i++)
+    {
+        if (commands[i] == NULL)
+        {
+            break;
+        }
+        else
+        {
+            nCommands++;
+        }
+    }
 
     // Verifica se existe "%" no input
     isBackground = !occur_in_str(argv, 4, (char *)"%", 1);
@@ -67,7 +79,7 @@ void run_external_commands(char **commands, char *input)
             {
                 perror("Falha ao definir novo handler para SIGTSTP\n");
             }
-            
+
             waitpid(pid, NULL, 0);
 
             return;
@@ -75,6 +87,17 @@ void run_external_commands(char **commands, char *input)
     }
     else
     {
+        if (nCommands == 1)
+        {
+            printf("Ignorando SIGUSR1...\n");
+            // Ignora SIGUSR1 se houver apenas um rodando em background
+            struct sigaction handler_sigusr1 = {.sa_handler = ignore_SIG};
+            if (sigemptyset(&handler_sigusr1.sa_mask) == -1 ||
+                sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGUSR1.\n");
+            }
+        }
         int controlProcess = fork();
         if (controlProcess == -1)
         {
@@ -83,7 +106,6 @@ void run_external_commands(char **commands, char *input)
         else if (controlProcess == 0) // Filho do processo de controle
         {
             setsid();
-            int processesRunning = 0;
             int pids[MAX_COMMANDS] = {0}; // Inicializa vetor de pids
             for (i = 0; i < MAX_COMMANDS; i++)
             {
@@ -119,56 +141,42 @@ void run_external_commands(char **commands, char *input)
                 else
                 {
                     pids[i] = pid; // Preenche vetor de pids com pid de filho criado na iteração
-                    processesRunning++;
                 }
             }
 
-            if (processesRunning == 1)
+            int pid;
+            int signaled = 0;
+            // Observa se algum filho recebeu SIGUSR1
+            while ((pid = waitpid(-1, &status, WNOHANG)) > -1)
             {
-                // ???
-                // Ignora SIGUSR1 se houver apenas um rodando em background
-                struct sigaction handler_sigusr1 = {.sa_handler = ignore_SIG};
-                if (sigemptyset(&handler_sigusr1.sa_mask) == -1 ||
-                    sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
+                if (pid > 0 && WIFSIGNALED(status))
                 {
-                    perror("Falha ao definir novo handler para SIGUSR1.\n");
-                }
-            }
-            else
-            {
-                int pid;
-                int signaled = 0;
-                // Observa se algum filho recebeu SIGUSR1
-                while ((pid = waitpid(-1, &status, WNOHANG)) > -1)
-                {
-                    if (pid > 0 && WIFSIGNALED(status))
+                    if (WTERMSIG(status) == SIGUSR1)
                     {
-                        if (WTERMSIG(status) == SIGUSR1)
-                        {
-                            signaled = 1;
-                            break;
-                        }
-                    }
-                }
-                // Se algum filho recebeu SIGUSR1, também mata todos os irmãos
-                if (signaled)
-                {
-                    for (int i = 0; i < MAX_COMMANDS; i++)
-                    {
-                        if (pids[i] != 0)
-                        {
-                            kill(pids[i], SIGUSR1);
-                        }
+                        signaled = 1;
+                        break;
                     }
                 }
             }
+            // Se algum filho recebeu SIGUSR1, também mata todos os irmãos
+            if (signaled)
+            {
+                for (int i = 0; i < MAX_COMMANDS; i++)
+                {
+                    if (pids[i] != 0)
+                    {
+                        kill(pids[i], SIGUSR1);
+                    }
+                }
+            }
+
             filename = NULL;
             free_commands(argv);
             free_commands(commands);
             free(input);
             exit(0);
         }
+        filename = NULL;
+        free_commands(argv);
     }
-    filename = NULL;
-    free_commands(argv);
 }

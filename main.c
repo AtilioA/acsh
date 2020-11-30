@@ -51,7 +51,6 @@ int main(/*int argc, char *argv[]*/)
         // Caso ocorra erro na leitura, comece uma nova iteração
         if (!parse_input(&input))
         {
-            printf("\n");
             continue;
         }
 
