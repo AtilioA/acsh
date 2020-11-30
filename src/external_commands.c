@@ -94,9 +94,84 @@ void run_external_commands(char **commands)
             perror("Falha ao definir novo handler para SIGTSTP\n");
         }
     }
+    else
+    {
+        int controlProcess = fork();
+        if (controlProcess == -1)
+        {
+            perror("Não foi possível criar um novo processo de controle.\n");
+        }
+        else if (controlProcess == 0) // Filho do processo de controle
+        {
+            setsid();
+            int pids[MAX_COMMANDS] = {0}; // Inicializa vetor de pids
+            for (i = 0; i < MAX_COMMANDS; i++)
+            {
+                if (commands[i] == NULL)
+                {
+                    break;
+                }
+                if (i > 0)
+                {
+                    argv = split_string_token(commands[i], " ");
+                    filename = argv[0];
+                }
 
-        // Liberando as strings
-        filename = NULL;
-        free_commands(argv);
+                int pid = fork(); // Cria filho para executar um comando
+                if (pid == -1)
+                {
+                    perror("Não foi possível criar um novo processo.\n");
+                }
+                else if (pid == 0)
+                {
+                    // Tenta executar comando externo
+                    if (execvp(filename, argv) == -1)
+                    {
+                        // Caso falhe, libere strings da memória e feche o processo filho
+                        printf("Comando desconhecido: %s\n", argv[0]);
+                        filename = NULL;
+                        free_commands(argv);
+                        exit(0);
+                    }
+                }
+                else
+                {
+                    pids[i] = pid; // Preenche vetor de pids com pid de filho criado na iteração
+                }
+            }
+
+            int pid;
+            int signaled = 0;
+            // Observa se algum filho recebeu SIGUSR1
+            while ((pid = waitpid(-1, &status, WNOHANG)) > -1)
+            {
+                if (pid > 0 && WIFSIGNALED(status))
+                {
+                    if (WTERMSIG(status) == SIGUSR1)
+                    {
+                        signaled = 1;
+                        break;
+                    }
+                }
+            }
+            // Se algum filho recebeu SIGUSR1, também mata todos os irmãos
+            if (signaled)
+            {
+                for (int i = 0; i < MAX_COMMANDS; i++)
+                {
+                    if (pids[i] != 0)
+                    {
+                        kill(pids[i], SIGUSR1);
+                    }
+                }
+            }
+            
+            filename = NULL;
+            free_commands(argv);
+            exit(0);
+        }
     }
+
+    filename = NULL;
+    free_commands(argv);
 }
