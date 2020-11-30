@@ -49,51 +49,28 @@ void run_external_commands(char **commands, char *input)
         }
         else
         {
+            struct sigaction handler_sigint = {.sa_handler = ignore_SIG};
+            struct sigaction handler_sigquit = {.sa_handler = ignore_SIG};
+            struct sigaction handler_sigtstp = {.sa_handler = ignore_SIG};
+            if (sigemptyset(&handler_sigint.sa_mask) == -1 ||
+                sigaction(SIGINT, &handler_sigint, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGINT.\n");
+            }
+            if (sigemptyset(&handler_sigquit.sa_mask) == -1 ||
+                sigaction(SIGQUIT, &handler_sigquit, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGQUIT\n");
+            }
+            if (sigemptyset(&handler_sigtstp.sa_mask) == -1 ||
+                sigaction(SIGTSTP, &handler_sigtstp, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGTSTP\n");
+            }
+            
             waitpid(pid, NULL, 0);
+
             return;
-        }
-
-        struct sigaction handler_sigint = {.sa_handler = ignore_SIG};
-        struct sigaction handler_sigquit = {.sa_handler = ignore_SIG};
-        struct sigaction handler_sigtstp = {.sa_handler = ignore_SIG};
-        if (sigemptyset(&handler_sigint.sa_mask) == -1 ||
-            sigaction(SIGINT, &handler_sigint, NULL) == -1)
-        {
-            perror("Falha ao definir novo handler para SIGINT.\n");
-        }
-        if (sigemptyset(&handler_sigquit.sa_mask) == -1 ||
-            sigaction(SIGQUIT, &handler_sigquit, NULL) == -1)
-        {
-            perror("Falha ao definir novo handler para SIGQUIT\n");
-        }
-        if (sigemptyset(&handler_sigtstp.sa_mask) == -1 ||
-            sigaction(SIGTSTP, &handler_sigtstp, NULL) == -1)
-        {
-            perror("Falha ao definir novo handler para SIGTSTP\n");
-        }
-        wait(NULL);
-
-        struct sigaction handler_sigint2 = {.sa_handler = trata_SIGINT};
-        struct sigaction handler_sigquit2 = {.sa_handler = trata_SIGQUIT};
-        struct sigaction handler_sigtstp2 = {.sa_handler = trata_SIGTSTP};
-        if (sigemptyset(&handler_sigint2.sa_mask) == -1 ||
-            sigaction(SIGINT, &handler_sigint2, NULL) == -1)
-        {
-            perror("Falha ao definir novo handler para SIGINT.\n");
-        }
-
-        // Novo handler do SIGQUIT (Ctrl+\)
-        if (sigemptyset(&handler_sigquit2.sa_mask) == -1 ||
-            sigaction(SIGQUIT, &handler_sigquit2, NULL) == -1)
-        {
-            perror("Falha ao definir novo handler para SIGQUIT\n");
-        }
-
-        // Novo handler do sinal SIGTSTP (Ctrl+Z)
-        if (sigemptyset(&handler_sigtstp2.sa_mask) == -1 ||
-            sigaction(SIGTSTP, &handler_sigtstp2, NULL) == -1)
-        {
-            perror("Falha ao definir novo handler para SIGTSTP\n");
         }
     }
     else
@@ -145,8 +122,6 @@ void run_external_commands(char **commands, char *input)
                     processesRunning++;
                 }
             }
-
-            printf("%i\n", processesRunning);
 
             if (processesRunning == 1)
             {
