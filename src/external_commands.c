@@ -79,7 +79,10 @@ void run_external_commands(char **commands, char *input)
             {
                 perror("Falha ao definir novo handler para SIGTSTP\n");
             }
+            
             waitpid(pid, NULL, 0);
+            
+            // Adição dos handlers novamente para que a mensagem "[...] Estou vacinado [...]" seja exibida
             struct sigaction handler_sigint2 = {.sa_handler = trata_SIGINT};
             struct sigaction handler_sigquit2 = {.sa_handler = trata_SIGQUIT};
             struct sigaction handler_sigtstp2 = {.sa_handler = trata_SIGTSTP};
@@ -116,7 +119,7 @@ void run_external_commands(char **commands, char *input)
         {
             setsid();
 
-            printf("Ignorando SIGUSR1 control process...\n");
+            // printf("Ignorando SIGUSR1 control process...\n");
             struct sigaction handler_sigusr1 = {.sa_handler = ignore_SIG};
             if (sigemptyset(&handler_sigusr1.sa_mask) == -1 ||
                 sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
@@ -146,16 +149,8 @@ void run_external_commands(char **commands, char *input)
                 {
                     if (nCommands == 1)
                     {
-                        printf("Ignorando SIGUSR1 filho...\n");
+                        // printf("Ignorando SIGUSR1 filho...\n");
                         signal(SIGUSR1, SIG_IGN);
-                        /*if (sigemptyset(&handler_sigusr1.sa_mask) == -1)
-                        {
-                            perror("Falha ao definir novo handler para SIGUSR1.\n");
-                        }
-                        if (sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
-                        {
-                            perror("Falha ao definir novo handler para SIGUSR1.\n");
-                        }*/
                     }
                     // Tenta executar comando externo
                     if (execvp(filename, argv) == -1)
@@ -193,7 +188,7 @@ void run_external_commands(char **commands, char *input)
             if (signaled)
             {
                 for (int i = 0; i < MAX_COMMANDS; i++)
-                {   
+                {
                     if (pids[i] != 0)
                     {
                         kill(pids[i], SIGUSR1);
