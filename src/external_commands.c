@@ -79,25 +79,34 @@ void run_external_commands(char **commands, char *input)
             {
                 perror("Falha ao definir novo handler para SIGTSTP\n");
             }
-
             waitpid(pid, NULL, 0);
+            struct sigaction handler_sigint2 = {.sa_handler = trata_SIGINT};
+            struct sigaction handler_sigquit2 = {.sa_handler = trata_SIGQUIT};
+            struct sigaction handler_sigtstp2 = {.sa_handler = trata_SIGTSTP};
+            if (sigemptyset(&handler_sigint2.sa_mask) == -1 ||
+                sigaction(SIGINT, &handler_sigint2, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGINT");
+            }
 
+            // Novo handler do SIGQUIT (Ctrl+\)
+            if (sigemptyset(&handler_sigquit2.sa_mask) == -1 ||
+                sigaction(SIGQUIT, &handler_sigquit2, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGQUIT\n");
+            }
+
+            // Novo handler do sinal SIGTSTP (Ctrl+Z)
+            if (sigemptyset(&handler_sigtstp2.sa_mask) == -1 ||
+                sigaction(SIGTSTP, &handler_sigtstp2, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGTSTP\n");
+            }
             return;
         }
     }
     else
     {
-        if (nCommands == 1)
-        {
-            printf("Ignorando SIGUSR1...\n");
-            // Ignora SIGUSR1 se houver apenas um rodando em background
-            struct sigaction handler_sigusr1 = {.sa_handler = ignore_SIG};
-            if (sigemptyset(&handler_sigusr1.sa_mask) == -1 ||
-                sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
-            {
-                perror("Falha ao definir novo handler para SIGUSR1.\n");
-            }
-        }
         int controlProcess = fork();
         if (controlProcess == -1)
         {
@@ -106,6 +115,15 @@ void run_external_commands(char **commands, char *input)
         else if (controlProcess == 0) // Filho do processo de controle
         {
             setsid();
+
+            printf("Ignorando SIGUSR1 control process...\n");
+            struct sigaction handler_sigusr1 = {.sa_handler = ignore_SIG};
+            if (sigemptyset(&handler_sigusr1.sa_mask) == -1 ||
+                sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
+            {
+                perror("Falha ao definir novo handler para SIGUSR1.\n");
+            }
+
             int pids[MAX_COMMANDS] = {0}; // Inicializa vetor de pids
             for (i = 0; i < MAX_COMMANDS; i++)
             {
@@ -126,6 +144,19 @@ void run_external_commands(char **commands, char *input)
                 }
                 else if (pid == 0)
                 {
+                    if (nCommands == 1)
+                    {
+                        printf("Ignorando SIGUSR1 filho...\n");
+                        signal(SIGUSR1, SIG_IGN);
+                        /*if (sigemptyset(&handler_sigusr1.sa_mask) == -1)
+                        {
+                            perror("Falha ao definir novo handler para SIGUSR1.\n");
+                        }
+                        if (sigaction(SIGUSR1, &handler_sigusr1, NULL) == -1)
+                        {
+                            perror("Falha ao definir novo handler para SIGUSR1.\n");
+                        }*/
+                    }
                     // Tenta executar comando externo
                     if (execvp(filename, argv) == -1)
                     {
@@ -151,7 +182,7 @@ void run_external_commands(char **commands, char *input)
             {
                 if (pid > 0 && WIFSIGNALED(status))
                 {
-                    if (WTERMSIG(status) == SIGUSR1)
+                    if (WTERMSIG(status) == SIGUSR1 && nCommands > 1)
                     {
                         signaled = 1;
                         break;
@@ -162,7 +193,7 @@ void run_external_commands(char **commands, char *input)
             if (signaled)
             {
                 for (int i = 0; i < MAX_COMMANDS; i++)
-                {
+                {   
                     if (pids[i] != 0)
                     {
                         kill(pids[i], SIGUSR1);
