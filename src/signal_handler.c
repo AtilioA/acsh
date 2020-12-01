@@ -31,8 +31,3 @@ void trata_SIGQUIT()
 {
     handle_signal(false);
 }
-
-void trata_SIGUSR1()
-{
-    handle_signal(false);
-}

@@ -14,6 +14,5 @@ void ignore_SIG();
 void trata_SIGINT();
 void trata_SIGTSTP();
 void trata_SIGQUIT();
-void trata_SIGUSR1();
 
 #endif
