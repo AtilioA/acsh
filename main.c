@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "include/utils.h"
 #include "include/string_handler.h"
 #include "include/signal_handler.h"
 #include "include/internal_commands.h"
